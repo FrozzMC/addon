@@ -20,11 +20,12 @@ public class SimpleConfManagerModelImpl implements ConfManagerModel {
 	}
 	
 	@Override
-	public boolean load() {
+	public boolean wasLoaded() {
 		try {
 			config = confHelper.reloadConfigData();
 		} catch (final IOException | InvalidConfigException exception) {
 			exception.printStackTrace();
+			config = null;
 			return false;
 		}
 		
