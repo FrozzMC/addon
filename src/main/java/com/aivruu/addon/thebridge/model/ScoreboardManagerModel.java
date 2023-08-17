@@ -2,6 +2,7 @@ package com.aivruu.addon.thebridge.model;
 
 import eu.mip.alandioda.bridge.spigot.game.Game;
 import fr.mrmicky.fastboard.FastBoard;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,9 +19,10 @@ public interface ScoreboardManagerModel {
 	/**
 	 * Creates a new FastBoard object (Scoreboard) to player.
 	 *
-	 * @param id {@code UUID} as {@code String} of player.
+	 * @param player {@code Player} object for that player.
+	 * @param game {@code Game} object for the game where is the player.
 	 */
-	void create(final @NotNull String id);
+	void create(final @NotNull Player player, final @NotNull Game game);
 	
 	/**
 	 * Removes the scoreboard to player.
