@@ -9,6 +9,7 @@ import com.aivruu.addon.thebridge.model.ScoreboardManagerModel;
 import com.aivruu.addon.thebridge.model.config.ConfModel;
 import com.aivruu.addon.thebridge.utils.LoggerUtils;
 import com.google.common.base.Preconditions;
+import eu.mip.alandioda.bridge.spigot.TheBridge;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import space.arim.dazzleconf.ConfigurationFactory;
@@ -60,12 +61,13 @@ public final class ScoreboardAddonPlugin extends JavaPlugin {
 			return;
 		}
 		
-		scoreboardManager = new ScoreboardManagerModelImpl(confManager.config(), getServer().getScheduler());
+		scoreboardManager = new ScoreboardManagerModelImpl(plugin, confManager.config(), getServer().getScheduler());
 	}
 	
 	@Override
 	public void onEnable() {
-		getServer().getPluginManager().registerEvents(new GameScoreboardListener(scoreboardManager), plugin);
+		getServer().getPluginManager()
+			.registerEvents(new GameScoreboardListener(JavaPlugin.getPlugin(TheBridge.class), scoreboardManager), plugin);
 		
 		Preconditions.checkNotNull(getCommand("thebridgeaddon")).setExecutor(new MainCommand(confManager, scoreboardManager));
 	}
