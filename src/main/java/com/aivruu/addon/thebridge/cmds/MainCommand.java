@@ -67,7 +67,7 @@ public class MainCommand implements CommandExecutor {
 				}
 				
 				if (args[1].equals("confirm")) {
-					if (!confManager.load()) {
+					if (!confManager.wasLoaded()) {
 						player.sendMessage(IridiumColorAPI.process("&c&l| &cConfiguration could not be reloaded correctly."));
 						break;
 					}

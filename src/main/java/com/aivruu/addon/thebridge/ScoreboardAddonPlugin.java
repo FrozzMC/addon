@@ -3,7 +3,7 @@ package com.aivruu.addon.thebridge;
 import com.aivruu.addon.thebridge.cmds.MainCommand;
 import com.aivruu.addon.thebridge.impl.ScoreboardManagerModelImpl;
 import com.aivruu.addon.thebridge.impl.SimpleConfManagerModelImpl;
-import com.aivruu.addon.thebridge.listener.GameStateListener;
+import com.aivruu.addon.thebridge.listener.GameScoreboardListener;
 import com.aivruu.addon.thebridge.model.ConfManagerModel;
 import com.aivruu.addon.thebridge.model.ScoreboardManagerModel;
 import com.aivruu.addon.thebridge.model.config.ConfModel;
@@ -54,7 +54,7 @@ public final class ScoreboardAddonPlugin extends JavaPlugin {
 		
 		// Load the components for the configuration before load the files.
 		loadConfigurationComponents();
-		if (!confManager.load()) {
+		if (!confManager.wasLoaded()) {
 			LoggerUtils.error("Could not load configuration correctly.");
 			setEnabled(false);
 			return;
@@ -65,7 +65,7 @@ public final class ScoreboardAddonPlugin extends JavaPlugin {
 	
 	@Override
 	public void onEnable() {
-		getServer().getPluginManager().registerEvents(new GameStateListener(scoreboardManager), plugin);
+		getServer().getPluginManager().registerEvents(new GameScoreboardListener(scoreboardManager), plugin);
 		
 		Preconditions.checkNotNull(getCommand("thebridgeaddon")).setExecutor(new MainCommand(confManager, scoreboardManager));
 	}
