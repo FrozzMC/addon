@@ -1,6 +1,7 @@
 package com.aivruu.addon.thebridge.utils;
 
-import com.iridium.iridiumcolorapi.IridiumColorAPI;
+import com.aivruu.iridiumcolorapi.ColorAPI;
+import com.aivruu.iridiumcolorapi.model.ColorAPIModel;
 import eu.mip.alandioda.bridge.spigot.TheBridge;
 import eu.mip.alandioda.bridge.spigot.game.Game;
 import eu.mip.alandioda.bridge.spigot.game.TeamBridge;
@@ -15,11 +16,34 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class PlaceholderUtils {
+	private static final ColorAPIModel MODEL = new ColorAPI();
 	private static final boolean PLACEHOLDER_API_AVAILABLE = (Bukkit.getServer()
 		.getPluginManager()
 		.getPlugin("PlaceholderAPI") != null) && Bukkit.getServer()
 		.getPluginManager()
 		.isPluginEnabled("PlaceholderAPI");
+	
+	/**
+	 * Process all the formats/codes color in the text string.
+	 *
+	 * @param text A {@code String} object to process.
+	 *
+	 * @return A text string with the colors processed.
+	 */
+	public static @NotNull String colorize(final @NotNull String text) {
+		return MODEL.process(text);
+	}
+	
+	/**
+	 * Process all the formats/codes color in the text list.
+	 *
+	 * @param text A {@code List} object of {@code String} type.
+	 *
+	 * @return A text list with the colors processed.
+	 */
+	public static @NotNull List<String> colorize(final @NotNull List<String> text) {
+		return MODEL.process(text);
+	}
 	
 	/**
 	 * Replaces all the placeholders (from PlaceholderAPI) that there into the list.
@@ -54,10 +78,10 @@ public class PlaceholderUtils {
 		if (game == null) {
 			// This server is using PlaceholderAPI?
 			if (PLACEHOLDER_API_AVAILABLE) {
-				return IridiumColorAPI.process(PlaceholderAPI.setPlaceholders(player, content));
+				return MODEL.process(PlaceholderAPI.setPlaceholders(player, content));
 			}
 			
-			return IridiumColorAPI.process(content);
+			return MODEL.process(content);
 		}
 		
 		// What?
@@ -70,7 +94,7 @@ public class PlaceholderUtils {
 		
 		// Check again if the server is using PlaceholderAPI :8
 		if (PLACEHOLDER_API_AVAILABLE) {
-			return IridiumColorAPI.process(PlaceholderAPI.setPlaceholders(
+			return MODEL.process(PlaceholderAPI.setPlaceholders(
 				player,
 				content.replace("<player-score>", Integer.toString(teamPlayer.scores))
 					.replace("<player-kills>", Integer.toString(teamPlayer.kills))
@@ -80,7 +104,7 @@ public class PlaceholderUtils {
 			));
 		}
 	
-		return IridiumColorAPI.process(content.replace("<player-score>", Integer.toString(teamPlayer.scores))
+		return MODEL.process(content.replace("<player-score>", Integer.toString(teamPlayer.scores))
 			.replace("<player-kills>", Integer.toString(teamPlayer.kills))
 			.replace("<map-name>", game.gameName)
 			.replace("<team-amount>", Integer.toString(game.GetTeamsCount()))
