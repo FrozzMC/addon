@@ -35,9 +35,10 @@ public final class ScoreboardAddonPlugin extends JavaPlugin {
 	public void onLoad() {
 		plugin = this;
 		
-		// Add the maven central repo for the dependencies.
-		LoggerUtils.info("Adding maven central repo for download dependencies...");
+		// Add the repositories for the dependencies.
+		LoggerUtils.info("Adding repositories for download dependencies...");
 		LibraryHandler.addMavenCentral();
+		LibraryHandler.addJitPack();
 		
 		// Load the required libraries by the plugin.
 		LoggerUtils.info("Downloading required libraries for the plugin.");
