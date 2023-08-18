@@ -16,6 +16,13 @@ public class LibraryHandler {
 	public static void addCustomRepo(final @NotNull String url) {
 		MANAGER.addRepository(url);
 	}
+
+	/** 
+	 * Add the maven central repository for dependencies search.
+	 */
+	public static void addMavenCentral() {
+		MANAGER.addMavenCentral();
+	}
 	
 	/**
 	 * Load a library from the Maven central repository.
@@ -31,7 +38,6 @@ public class LibraryHandler {
 			.id(String.format("%s-lib", parts[1]))
 			.build();
 	
-		MANAGER.addMavenCentral();
 		MANAGER.loadLibrary(lib);
 	}
 	
