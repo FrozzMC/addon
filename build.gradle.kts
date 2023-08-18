@@ -13,30 +13,32 @@ repositories {
 	mavenLocal()
 	maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
 	maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
-	maven("https://nexus.iridiumdevelopment.net/repository/maven-releases/")
-	maven("https://jitpack.io/")
+  maven("https://jitpack.io/")
 	maven("https://repo.alessiodp.com/releases")
 }
 
 dependencies {
 	compileOnly("org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT")
 	compileOnly("me.clip:placeholderapi:2.11.3")
-	
-	compileOnly("net.byteflux:libby-bukkit:1.2.0")
+
+	compileOnly(files("libs/TheBridge.jar"))
 
 	compileOnly("space.arim.dazzleconf:dazzleconf-ext-snakeyaml:1.3.0-M2")
-	compileOnly("com.iridium:IridiumColorAPI:1.0.6")
 	compileOnly("fr.mrmicky:fastboard:2.0.0")
-
-	implementation(files("libs/TheBridge_18+.jar"))
+	compileOnly("com.github.VelexNetwork:iridium-color-api:1.2.0")
+	
+	implementation("net.byteflux:libby-bukkit:1.2.0")
 }
 
 tasks {
 	shadowJar {
-		archiveClassifier.set("")
-		archiveFileName.set("scoreboard-addon-v$release.jar")
+		archiveFileName.set("addon-v$release.jar")
 		
 		destinationDirectory.set(file("$rootDir/bin/"))
+		minimize()
+
+		val libsRoute = "$directory.libs"
+		relocate("net.byteflux.libby", "$libsRoute.libby")
 	}
 	
 	withType<JavaCompile> {
