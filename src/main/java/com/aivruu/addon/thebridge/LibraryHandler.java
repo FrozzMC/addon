@@ -17,6 +17,13 @@ public class LibraryHandler {
 		MANAGER.addRepository(url);
 	}
 
+   /**
+	 * Add the JitPack repository for dependencies search.
+	 */   
+	public static void addJitPack() {
+		MANAGER.addJitPack();
+	}
+
 	/** 
 	 * Add the maven central repository for dependencies search.
 	 */
