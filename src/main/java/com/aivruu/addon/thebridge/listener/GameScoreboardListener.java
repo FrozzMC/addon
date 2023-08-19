@@ -24,18 +24,17 @@ public class GameScoreboardListener implements Listener {
 	void onGameJoin(final PlayerCommandPreprocessEvent event) {
 		if (event.isCancelled()) return;
 		
-		Player player = event.getPlayer();
+		final Player player = event.getPlayer();
 		final String id = player.getUniqueId().toString();
-		
+
+		// The command executed contains the 'join' argument?
+		// Also, check if the player has an scoreboard created (by this plugin).
 		if (event.getMessage().contains("join") && scoreboardManager.findOrNull(id) == null) {
 			// Removes old scoreboard.
 			player.setScoreboard(null);
 			// Creates new scoreboard to player.
 			scoreboardManager.create(player, bridgePlugin.GetGameByPlayer(player));
-			return;
 		}
-		
-		player = null;
 	}
 	
 	@EventHandler (priority = EventPriority.LOW)
