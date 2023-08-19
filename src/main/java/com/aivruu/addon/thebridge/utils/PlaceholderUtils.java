@@ -85,9 +85,11 @@ public class PlaceholderUtils {
 		}
 		
 		// What?
-		for (final TeamBridge bridge : game.teams) {
+		for (TeamBridge bridge : game.teams) {
 			content = content.replace("<team-color>", bridge.teamColor.getChatColor());
 			content = content.replace("<team-name>", bridge.teamColor.getTeamName());
+			content = content.replace("<current-points>", Integer.toString(bridge.getScorePoints()));
+			bridge = null;
 		}
 		
 		final TeamPlayer teamPlayer = game.teamPlayers.get(player.getName());
@@ -109,6 +111,8 @@ public class PlaceholderUtils {
 			.replace("<map-name>", game.gameName)
 			.replace("<team-amount>", Integer.toString(game.GetTeamsCount()))
 			.replace("<max-team-capacity>", Integer.toString(game.maxPlayersPerTeam))
+			.replace("<players>", Integer.toString(game.teamPlayers.size()))
+			.replace("<max-players>", Integer.toString(game.maxPlayersPerTeam * game.teams.size()))
 		);
 	}
 }
