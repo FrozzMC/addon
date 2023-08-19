@@ -30,7 +30,10 @@ public class MainCommand implements CommandExecutor {
 		final @NotNull String label,
 		final @NotNull String[] args
 	) {
-		if (!(sender instanceof Player)) return false;
+		if (!(sender instanceof Player)) {
+			handleConsoleSender(sender, args);
+			return false;
+		}
 		
 		final Player player = (Player) sender;
 		
@@ -68,7 +71,7 @@ public class MainCommand implements CommandExecutor {
 				
 				if (args[1].equals("confirm")) {
 					if (!confManager.wasLoaded()) {
-						player.sendMessage(PlaceholderUtils.colorize("&c&l| &cConfiguration could not be reloaded correctly."));
+						player.sendMessage(PlaceholderUtils.colorize("&c&l| &cConfiguration could not be loaded correctly."));
 						break;
 					}
 					
@@ -81,5 +84,57 @@ public class MainCommand implements CommandExecutor {
 		}
 		
 		return false;
+	}
+	
+	private void handleConsoleSender(final @NotNull CommandSender sender, final @NotNull String[] args) {
+		if (args.length == 0) {
+			sender.sendMessage(PlaceholderUtils.colorize(String.format(
+				"&a&l| TheBridgeAddon &ais running on &a&lBukkit-%s",
+				Bukkit.getBukkitVersion()
+			)));
+			sender.sendMessage(PlaceholderUtils.colorize(String.format(
+				"&a&l| &aAddon current version: &e%s",
+				Constants.VERSION
+			)));
+			return;
+		}
+		
+		switch (args[0]) {
+			default:
+				sender.sendMessage(PlaceholderUtils.colorize("&c&l| &cUnknown sub-command specified."));
+				return;
+			case "help":
+				PlaceholderUtils.colorize(Arrays.asList(
+					"&a&lTheBridgeAddon &8| &aAdmin Help Commands",
+					"&7 - &b/tba help &fShows this message.",
+					"&7 - &b/tba reload &fReloads the plugin."
+				)).forEach(sender::sendMessage);
+				return;
+			case "reload":
+				sender.sendMessage(PlaceholderUtils.colorize("&c&l| &cBy do this could happen an error during this process."));
+				sender.sendMessage(PlaceholderUtils.colorize("&c&l| &cWe recommend restart the server for this."));
+				
+				if (args.length == 1) {
+					sender.sendMessage(PlaceholderUtils.colorize("&c&l| &cIf you want to reload the plugin, type &e/sba reload confirm"));
+					return;
+				}
+				
+				if (args[1].equals("confirm")) {
+					if (!confManager.wasLoaded()) {
+						sender.sendMessage(PlaceholderUtils.colorize("&c&l| &cConfiguration could not be reloaded correctly."));
+						return;
+					}
+					
+					// Checks if there's players connected.
+					if (Bukkit.getOnlinePlayers().size() >= 1) {
+						scoreboardManager.reload();
+					}
+					
+					sender.sendMessage(PlaceholderUtils.colorize("&a&l| &aPlugin reloaded correctly!"));
+					return;
+				}
+				
+				sender.sendMessage(PlaceholderUtils.colorize("&c&l| &cReload confirmation cancelled."));
+		}
 	}
 }
