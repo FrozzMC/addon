@@ -73,7 +73,7 @@ public interface ConfModel {
 		"",
 		"&8 | &fMap: &e<map-name>",
 		"",
-		"&8 | &fPlayers: &e<players>/&e<max-players>",
+		"&8 | &fPlayers: &e<players>/<max-players>",
 		"&8 | &fState: &aWaiting",
 		"",
 		"&e play.velex.es"
@@ -89,7 +89,7 @@ public interface ConfModel {
 		"",
 		"&8 | &fMap: &e<map-name>",
 		"",
-		"&8 | &fPlayers: &e<players>/&e<max-players>",
+		"&8 | &fPlayers: &e<players>/<max-players>",
 		"&8 | &fState: &aStarting",
 		"",
 		"&e play.velex.es"
@@ -101,7 +101,7 @@ public interface ConfModel {
 	@ConfComments("Scoreboard format when game state is 'playing'.")
 	@ConfDefault.DefaultStrings({
 		"",
-		"&8 | &fYour team: <team> &8(&7<team-amount>/<max-team-capacity>&8)",
+		"&8 | &fYour team: <team> &8(&7<current-points>&8)",
 		"&8 | &fYour kills: &e<player-kills>",
 		"&8 | &fYour score: &e<player-score>",
 		"",
