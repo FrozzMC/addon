@@ -39,6 +39,7 @@ public final class ScoreboardAddonPlugin extends JavaPlugin {
 		LoggerUtils.info("Adding repositories for download dependencies...");
 		LibraryHandler.addMavenCentral();
 		LibraryHandler.addJitPack();
+		LibraryHandler.addCustomRepo("https://repo.unnamed.team/repository/unnamed-public/");
 		
 		// Load the required libraries by the plugin.
 		LoggerUtils.info("Downloading required libraries for the plugin.");
@@ -46,7 +47,8 @@ public final class ScoreboardAddonPlugin extends JavaPlugin {
 			"com{}github{}VelexNetwork:iridium-color-api:1.2.0",
 			"fr{}mrmicky:fastboard:2.0.0",
 			"space{}arim{}dazzleconf:dazzleconf-core:1.3.0-M2",
-			"space{}arim{}dazzleconf:dazzleconf-ext-snakeyaml:1.3.0-M2"
+			"space{}arim{}dazzleconf:dazzleconf-ext-snakeyaml:1.3.0-M2",
+			"me.fixeddev:commandflow-universal:0.5.3"
 		);
 		
 		LoggerUtils.info("Loading configuration components...");
@@ -79,18 +81,12 @@ public final class ScoreboardAddonPlugin extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		LoggerUtils.info("The plugin is being disabled...");
+
+		// The ScoreboardManagerModel reference not been deleted yet?
 		if (scoreboardManager != null) {
 			LoggerUtils.info("Clearing memory used by the plugin...");
 			scoreboardManager.clear();
 			scoreboardManager = null;
-		}
-		
-		if (confManager != null) {
-			confManager = null;
-		}
-		
-		if (plugin != null) {
-			plugin = null;
 		}
 	}
 }
