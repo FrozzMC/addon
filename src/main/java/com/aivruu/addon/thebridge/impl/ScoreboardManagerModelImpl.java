@@ -51,25 +51,24 @@ public class ScoreboardManagerModelImpl implements ScoreboardManagerModel {
 		final FastBoard board = new FastBoard(player);
 		
 		cache.put(id, board);
-		
+
+		// Checks if the title-animated is enabled in the configuration.
 		if (config.enableAnimation()) {
 			// Creates the title task for that player.
 			titleTasks.put(id, new TitleUpdateTask(
-				board,
+				board, 
 				config.animationContent(),
 				config.animationRate()
 			).runTaskTimerAsynchronously(plugin, 0L, config.animationRate()).getTaskId());
-			
-			board.updateTitle(board.getTitle());
 		} else {
 			board.updateTitle(PlaceholderUtils.parse(player, config.scoreboardTitle()));
 		}
 		
 		contentTasks.put(id, scheduler.runTaskTimerAsynchronously(
 			plugin,
-			() -> update(game), 20L,
-			config.contentRate()).getTaskId()
-		);
+			() -> update(game), 
+			20L, config.contentRate()
+		).getTaskId());
 	}
 	
 	@Override
@@ -132,15 +131,13 @@ public class ScoreboardManagerModelImpl implements ScoreboardManagerModel {
 			player = null;
 		}
 		
-		TheBridge bridgePluginReference = JavaPlugin.getPlugin(TheBridge.class);
+		final TheBridge bridge = JavaPlugin.getPlugin(TheBridge.class);
 		
 		// Creates again the scoreboard to the players.
 		for (Player player : Bukkit.getOnlinePlayers()) {
-			create(player, bridgePluginReference.GetGameByPlayer(player));
+			create(player, bridge.GetGameByPlayer(player));
 			player = null;
 		}
-		
-		bridgePluginReference = null;
 	}
 	
 	@Override
