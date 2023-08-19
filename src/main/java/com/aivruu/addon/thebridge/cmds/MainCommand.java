@@ -61,11 +61,9 @@ public class MainCommand implements CommandExecutor {
 				)).forEach(player::sendMessage);
 				break;
 			case "reload":
-				player.sendMessage(PlaceholderUtils.colorize("&c&l| &cBy do this could happen an error during this process."));
-				player.sendMessage(PlaceholderUtils.colorize("&c&l| &cWe recommend restart the server for this."));
-				
 				if (args.length == 1) {
-					player.sendMessage(PlaceholderUtils.colorize("&c&l| &cIf you want to reload the plugin, type &e/sba reload confirm"));
+					player.sendMessage(PlaceholderUtils.colorize("&c&l| &cBy do this could happen an error during this process. We recommend restart the server for this."));
+					player.sendMessage(PlaceholderUtils.colorize("&c&l| &cIf you want to reload the plugin, type &e/tba reload confirm"));
 					break;
 				}
 				
@@ -111,11 +109,9 @@ public class MainCommand implements CommandExecutor {
 				)).forEach(sender::sendMessage);
 				return;
 			case "reload":
-				sender.sendMessage(PlaceholderUtils.colorize("&c&l| &cBy do this could happen an error during this process."));
-				sender.sendMessage(PlaceholderUtils.colorize("&c&l| &cWe recommend restart the server for this."));
-				
 				if (args.length == 1) {
-					sender.sendMessage(PlaceholderUtils.colorize("&c&l| &cIf you want to reload the plugin, type &e/sba reload confirm"));
+					sender.sendMessage(PlaceholderUtils.colorize("&c&l| &cBy do this could happen an error during this process. We recommend restart the server for this."));
+					sender.sendMessage(PlaceholderUtils.colorize("&c&l| &cIf you want to reload the plugin, type &e/tba reload confirm"));
 					return;
 				}
 				
