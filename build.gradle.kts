@@ -15,7 +15,6 @@ repositories {
 	maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
   maven("https://jitpack.io/")
 	maven("https://repo.alessiodp.com/releases")
-  maven("https://repo.unnamed.team/repository/unnamed-public/")
 }
 
 dependencies {
@@ -27,7 +26,6 @@ dependencies {
 	compileOnly("space.arim.dazzleconf:dazzleconf-ext-snakeyaml:1.3.0-M2")
 	compileOnly("fr.mrmicky:fastboard:2.0.0")
 	compileOnly("com.github.VelexNetwork:iridium-color-api:1.2.0")
-  compileOnly("me.fixeddev:commandflow-universal:0.5.3")
 	
 	implementation("net.byteflux:libby-bukkit:1.2.0")
 }
