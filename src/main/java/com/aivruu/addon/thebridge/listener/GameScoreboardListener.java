@@ -4,6 +4,7 @@ import com.aivruu.addon.thebridge.model.ScoreboardManagerModel;
 import com.google.common.base.Preconditions;
 import eu.mip.alandioda.bridge.spigot.TheBridge;
 import eu.mip.alandioda.bridge.spigot.event.GameStateChangeEvent;
+import eu.mip.alandioda.bridge.spigot.game.Game;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -28,12 +29,16 @@ public class GameScoreboardListener implements Listener {
 		final String id = player.getUniqueId().toString();
 
 		// The command executed contains the 'join' argument?
-		// Also, check if the player has an scoreboard created (by this plugin).
+		// Also, check if the player have a scoreboard created (by this plugin).
 		if (event.getMessage().contains("join") && scoreboardManager.findOrNull(id) == null) {
 			// Removes old scoreboard.
 			player.setScoreboard(null);
-			// Creates new scoreboard to player.
-			scoreboardManager.create(player, bridgePlugin.GetGameByPlayer(player));
+			
+			final Game game = bridgePlugin.GetGameByPlayer(player);
+			// If the reference is null, the player isn't playing.
+			if (game == null) return;
+			
+			scoreboardManager.create(player, game);
 		}
 	}
 	
