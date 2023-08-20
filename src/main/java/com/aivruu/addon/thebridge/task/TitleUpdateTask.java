@@ -34,9 +34,8 @@ public class TitleUpdateTask extends BukkitRunnable {
 		// The board has been deleted?
 		if (!board.isDeleted()) {
 			board.updateTitle(PlaceholderUtils.parse(board.getPlayer(), content.get(rate)));
-			return;
+		} else {
+			cancel();
 		}
-		
-		cancel();
 	}
 }
