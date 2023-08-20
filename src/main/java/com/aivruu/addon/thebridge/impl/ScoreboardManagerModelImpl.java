@@ -47,19 +47,17 @@ public class ScoreboardManagerModelImpl implements ScoreboardManagerModel {
 	
 	@Override
 	public void create(final @NotNull Player player, final @NotNull Game game) {
-		final String id = player.getUniqueId().toString();
 		final FastBoard board = new FastBoard(player);
-		
+		final String id = player.getUniqueId().toString();
 		cache.put(id, board);
 
-		// Checks if the title-animated is enabled in the configuration.
+		// Checks if the animation for the title is enabled.
 		if (config.enableAnimation()) {
-			// Creates the title task for that player.
-			titleTasks.put(id, new TitleUpdateTask(
-				board, 
-				config.animationContent(),
-				config.animationRate()
-			).runTaskTimerAsynchronously(plugin, 0L, config.animationRate()).getTaskId());
+			titleTasks.put(
+				id,
+				new TitleUpdateTask(board, config.animationContent(), config.animationRate())
+					.runTaskTimerAsynchronously(plugin, 0L, config.animationRate()).getTaskId()
+			);
 		} else {
 			board.updateTitle(PlaceholderUtils.parse(player, config.scoreboardTitle()));
 		}
@@ -114,8 +112,9 @@ public class ScoreboardManagerModelImpl implements ScoreboardManagerModel {
 					board.updateLines(PlaceholderUtils.parse(player, config.scoreboardPlayingFormat()));
 					break;
 				case Ending:
-					for (final String playerName : game.teamPlayers.keySet()) {
+					for (String playerName : game.teamPlayers.keySet()) {
 						remove(Bukkit.getPlayer(playerName).getUniqueId().toString());
+						playerName = null;
 					}
 			}
 			
@@ -125,27 +124,20 @@ public class ScoreboardManagerModelImpl implements ScoreboardManagerModel {
 	
 	@Override
 	public void reload() {
-		// Removes all the scoreboards to the players.
-		for (Player player : Bukkit.getOnlinePlayers()) {
-			remove(player.getUniqueId().toString());
-			player = null;
-		}
-		
 		final TheBridge bridge = JavaPlugin.getPlugin(TheBridge.class);
 		
-		// Creates again the scoreboard to the players.
-		for (Player player : Bukkit.getOnlinePlayers()) {
+		String id;
+		for (final Player player : Bukkit.getOnlinePlayers()) {
+			id = player.getUniqueId().toString();
+			
+			remove(id);
 			create(player, bridge.GetGameByPlayer(player));
-			player = null;
 		}
 	}
 	
 	@Override
 	public void clear() {
-		for (final String id : cache.keySet()) {
-			remove(id);
-		}
-		
+		cache.keySet().forEach(this::remove);
 		cache.clear();
 	}
 }
