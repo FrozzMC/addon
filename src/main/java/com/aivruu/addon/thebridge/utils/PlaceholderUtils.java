@@ -70,42 +70,28 @@ public class PlaceholderUtils {
 	 * with the colors translated.
 	 */
 	public static @NotNull String parse(final @NotNull Player player, @NotNull String content) {
+    // Check if the server is using PlaceholderAPI.
+    // Else, just apply the colors.
+		if (PLACEHOLDER_API_AVAILABLE) {
+      content = PlaceholderAPI.setPlaceholders(player, content);
+		} else {
+      content = MODEL.process(content);
+    }
+    
 		// I know, all below is very ugly :9, but I don't know another way to do this, don't hate me pls.
 		// - MrBugs
 		final Game game = JavaPlugin.getPlugin(TheBridge.class).GetGameByPlayer(player);
-		
 		// The player is in a game?
-		if (game == null) {
-			// This server is using PlaceholderAPI?
-			if (PLACEHOLDER_API_AVAILABLE) {
-				return MODEL.process(PlaceholderAPI.setPlaceholders(player, content));
-			}
-			
-			return MODEL.process(content);
-		}
-		
+		if (game == null) return content;
+    
 		// What?
-		for (TeamBridge bridge : game.teams) {
+		for (final TeamBridge bridge : game.teams) {
 			content = content.replace("<team-color>", bridge.teamColor.getChatColor());
 			content = content.replace("<team-name>", bridge.teamColor.getTeamName());
 			content = content.replace("<current-points>", Integer.toString(bridge.getScorePoints()));
-			bridge = null;
 		}
 		
 		final TeamPlayer teamPlayer = game.teamPlayers.get(player.getName());
-		
-		// Check again if the server is using PlaceholderAPI :8
-		if (PLACEHOLDER_API_AVAILABLE) {
-			return MODEL.process(PlaceholderAPI.setPlaceholders(
-				player,
-				content.replace("<player-score>", Integer.toString(teamPlayer.scores))
-					.replace("<player-kills>", Integer.toString(teamPlayer.kills))
-					.replace("<map-name>", game.gameName)
-					.replace("<team-amount>", Integer.toString(game.GetTeamsCount()))
-					.replace("<max-team-players>", Integer.toString(game.maxPlayersPerTeam))
-			));
-		}
-	
 		return MODEL.process(content.replace("<player-score>", Integer.toString(teamPlayer.scores))
 			.replace("<player-kills>", Integer.toString(teamPlayer.kills))
 			.replace("<map-name>", game.gameName)
