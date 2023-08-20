@@ -1,6 +1,7 @@
 package com.aivruu.addon.thebridge;
 
 import com.aivruu.addon.thebridge.cmds.MainCommand;
+import com.aivruu.addon.thebridge.cmds.completer.MainCommandTabCompleter;
 import com.aivruu.addon.thebridge.impl.ScoreboardManagerModelImpl;
 import com.aivruu.addon.thebridge.impl.SimpleConfManagerModelImpl;
 import com.aivruu.addon.thebridge.listener.GameScoreboardListener;
@@ -9,6 +10,7 @@ import com.aivruu.addon.thebridge.model.ScoreboardManagerModel;
 import com.aivruu.addon.thebridge.utils.LoggerUtils;
 import com.google.common.base.Preconditions;
 import eu.mip.alandioda.bridge.spigot.TheBridge;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,7 +41,6 @@ public final class ScoreboardAddonPlugin extends JavaPlugin {
 		LoggerUtils.info("Adding repositories for download dependencies...");
 		LibraryHandler.addMavenCentral();
 		LibraryHandler.addJitPack();
-		LibraryHandler.addCustomRepo("https://repo.unnamed.team/repository/unnamed-public/");
 		
 		// Load the required libraries by the plugin.
 		LoggerUtils.info("Downloading required libraries for the plugin.");
@@ -47,8 +48,7 @@ public final class ScoreboardAddonPlugin extends JavaPlugin {
 			"com{}github{}VelexNetwork:iridium-color-api:1.2.0",
 			"fr{}mrmicky:fastboard:2.0.0",
 			"space{}arim{}dazzleconf:dazzleconf-core:1.3.0-M2",
-			"space{}arim{}dazzleconf:dazzleconf-ext-snakeyaml:1.3.0-M2",
-			"me.fixeddev:commandflow-universal:0.5.3"
+			"space{}arim{}dazzleconf:dazzleconf-ext-snakeyaml:1.3.0-M2"
 		);
 		
 		LoggerUtils.info("Loading configuration components...");
@@ -66,15 +66,19 @@ public final class ScoreboardAddonPlugin extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		LoggerUtils.info("Registering plugin listener...");
-		getServer().getPluginManager()
-			.registerEvents(new GameScoreboardListener(JavaPlugin.getPlugin(TheBridge.class), scoreboardManager), plugin);
+		getServer().getPluginManager().registerEvents(
+			new GameScoreboardListener(JavaPlugin.getPlugin(TheBridge.class), scoreboardManager),
+			plugin
+		);
 		
 		LoggerUtils.info("Registering plugin command...");
-		Preconditions.checkNotNull(getCommand("thebridgeaddon")).setExecutor(new MainCommand(confManager, scoreboardManager));
-	
+		final PluginCommand command = Preconditions.checkNotNull(getCommand("thebridgeaddon"));
+		command.setExecutor(new MainCommand(confManager, scoreboardManager));
+		command.setTabCompleter(new MainCommandTabCompleter());
+		
 		LoggerUtils.info(
 			"The plugin has been enabled successful!",
-			String.format("Running on version %s", Constants.VERSION)
+			"Running on version " + Constants.VERSION
 		);
 	}
 	
