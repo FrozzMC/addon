@@ -25,14 +25,14 @@ public interface ConfModel {
 		"Update-rate for the title animation.",
 		"Ticks: 20 = 1 second."
 	})
-	@ConfDefault.DefaultInteger(7)
-	int animationRate();
+	@ConfDefault.DefaultInteger((byte) 7)
+	byte animationRate();
 	
 	@AnnotationBasedSorter.Order(30)
 	@ConfKey("config.content-update-rate")
 	@ConfComments("Update-rate for the scoreboard content (below the title).")
-	@ConfDefault.DefaultInteger(20)
-	int contentRate();
+	@ConfDefault.DefaultInteger((byte) 20)
+	byte contentRate();
 	
 	@AnnotationBasedSorter.Order(40)
 	@ConfKey("config.title.static")
