@@ -1,5 +1,6 @@
 package com.aivruu.addon.thebridge.impl;
 
+import com.aivruu.addon.thebridge.enums.Result;
 import com.aivruu.addon.thebridge.model.ConfManagerModel;
 import com.aivruu.addon.thebridge.model.config.ConfModel;
 import org.jetbrains.annotations.NotNull;
@@ -32,24 +33,18 @@ public class SimpleConfManagerModelImpl implements ConfManagerModel {
 	}
 	
 	@Override
-	public boolean wasLoaded() {
+	public @NotNull Result load() {
 		try {
 			config = confHelper.reloadConfigData();
 		} catch (final IOException | InvalidConfigException exception) {
 			exception.printStackTrace();
-			config = null;
-			return false;
+			return Result.NO_CONFIG_LOAD;
 		}
-		
-		return true;
+		return Result.SUCCESS;
 	}
 	
 	@Override
 	public @NotNull ConfModel config() {
-		if (config == null) {
-			throw new IllegalStateException("Configuration model has not been initialized/loaded yet.");
-		}
-		
 		return config;
 	}
 }
