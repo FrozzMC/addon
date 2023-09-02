@@ -1,5 +1,6 @@
 package com.aivruu.addon.thebridge.cmds.completer;
 
+import com.google.common.collect.Lists;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -14,7 +15,7 @@ public class MainCommandTabCompleter implements TabCompleter {
 	private final List<String> arguments;
 	
 	public MainCommandTabCompleter() {
-		arguments = new ArrayList<>();
+		arguments = Lists.newArrayList("about", "reload");
 	}
 	
 	@Override
@@ -24,23 +25,18 @@ public class MainCommandTabCompleter implements TabCompleter {
 		final @NotNull String label,
 		final @NotNull String[] args
 	) {
-		if (arguments.isEmpty()) {
-			arguments.add("help");
-			arguments.add("reload");
-		}
-		
 		final List<String> results = new ArrayList<>();
-		
-		if (args.length == 1)  {
-			for (final String possibleResult : arguments) {
-				if (!args[0].startsWith(possibleResult)) continue;
-				
-				results.add(possibleResult);
-			}
-			
-			return results;
+		// Checks if the command has possible arguments.
+		if (args.length < 1)  {
+			return Collections.emptyList();
 		}
-		
-		return Collections.emptyList();
+		for (final String possibleResult : arguments) {
+			// Checks if the first argument start with some value from list.
+			if (!args[0].startsWith(possibleResult)) {
+				continue;
+			}
+			results.add(possibleResult);
+		}
+		return results;
 	}
 }
