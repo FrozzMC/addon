@@ -1,43 +1,37 @@
 package com.aivruu.addon.thebridge.impl;
 
 import com.aivruu.addon.thebridge.ScoreboardAddonPlugin;
+import com.aivruu.addon.thebridge.enums.Result;
 import com.aivruu.addon.thebridge.model.ScoreboardManagerModel;
 import com.aivruu.addon.thebridge.model.config.ConfModel;
+import com.aivruu.addon.thebridge.task.FrameUpdateTask;
 import com.aivruu.addon.thebridge.task.TitleUpdateTask;
 import com.aivruu.addon.thebridge.utils.PlaceholderUtils;
 import com.google.common.base.Preconditions;
 import eu.mip.alandioda.bridge.spigot.TheBridge;
 import eu.mip.alandioda.bridge.spigot.game.Game;
 import fr.mrmicky.fastboard.FastBoard;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitScheduler;
+import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ScoreboardManagerModelImpl implements ScoreboardManagerModel {
 	private final ScoreboardAddonPlugin plugin;
 	private final ConfModel config;
-	private final BukkitScheduler scheduler;
 	private final Map<String, FastBoard> cache;
-	private final Map<String, Integer> titleTasks;
-	private final Map<String, Integer> contentTasks;
 	
-	public ScoreboardManagerModelImpl(
-		final @NotNull ScoreboardAddonPlugin plugin,
-		final @NotNull ConfModel config,
-		final @NotNull BukkitScheduler scheduler
-	) {
+	private BukkitTask titleTask;
+	private BukkitTask frameTask;
+	
+	public ScoreboardManagerModelImpl(final @NotNull ScoreboardAddonPlugin plugin, final @NotNull ConfModel config) {
 		this.plugin = Preconditions.checkNotNull(plugin, "ScoreboardAddonPlugin reference cannot be null.");
 		this.config = Preconditions.checkNotNull(config, "ConfModel object cannot be null.");
-		this.scheduler = Preconditions.checkNotNull(scheduler, "BukkitScheduler object cannot be null.");
 		cache = new HashMap<>();
-		titleTasks = new HashMap<>();
-		contentTasks = new HashMap<>();
 	}
 	
 	@Override
@@ -46,98 +40,72 @@ public class ScoreboardManagerModelImpl implements ScoreboardManagerModel {
 	}
 	
 	@Override
-	public void create(final @NotNull Player player, final @NotNull Game game) {
-		final FastBoard board = new FastBoard(player);
-		final String id = player.getUniqueId().toString();
-		cache.put(id, board);
-
-		// Checks if the animation for the title is enabled.
-		if (config.enableAnimation()) {
-			titleTasks.put(
-				id,
-				new TitleUpdateTask(board, config.animationContent(), config.animationRate())
-					.runTaskTimerAsynchronously(plugin, 0L, config.animationRate()).getTaskId()
-			);
-		} else {
-			board.updateTitle(PlaceholderUtils.parse(player, config.scoreboardTitle()));
-		}
-		
-		contentTasks.put(id, scheduler.runTaskTimerAsynchronously(
-			plugin,
-			() -> update(game), 
-			20L, config.contentRate()
-		).getTaskId());
+	public @NotNull Collection<FastBoard> boards() {
+		return cache.values();
 	}
 	
 	@Override
-	public void remove(final @NotNull String id) {
-		final int titleTask = titleTasks.remove(id);
-		final int contentTask = contentTasks.remove(id);
-		
-		// If the animation is enabled, check if the task for the title is currently running.
-		if (config.enableAnimation() && scheduler.isCurrentlyRunning(titleTask)) {
-			scheduler.cancelTask(titleTask);
+	public void start() {
+		// Checks if the title animation is enabled.
+		if (config.enableAnimation()) {
+			final byte animationUpdateRate = config.animationRate();
+			titleTask = new TitleUpdateTask(this, config.animationContent(), animationUpdateRate)
+				.runTaskTimerAsynchronously(plugin, 0L, animationUpdateRate);
 		}
-		
-		// Checks if the task for the scoreboard content is running yet.
-		if (scheduler.isCurrentlyRunning(contentTask)) {
-			scheduler.cancelTask(contentTask);
-		}
-		
+		frameTask = new FrameUpdateTask(TheBridge.getPlugin(TheBridge.class), this)
+			.runTaskTimerAsynchronously(plugin, 0L, config.contentRate());
+	}
+	
+	@Override
+	public void create(final @NotNull Player player) {
+		cache.put(player.getUniqueId().toString(), new FastBoard(player));
+	}
+	
+	@Override
+	public @NotNull Result remove(final @NotNull String id) {
 		FastBoard board = cache.remove(id);
 		// Checks if the FastBoard object for that id isn't in cache.
-		if (board == null) return;
-		
+		if (board == null) {
+			return Result.NO_SCOREBOARD_REMOVE;
+		}
 		// Checks if the board wasn't deleted yet.
 		if (!board.isDeleted()) {
 			board.delete();
 		}
-
 		board = null;
+		return Result.SUCCESS;
 	}
 	
 	@Override
-	public void update(final @NotNull Game game) {
-		for (final FastBoard board : cache.values()) {
-			Player player = board.getPlayer();
-			
-			switch (game.state) {
-				case Waiting:
-					board.updateLines(PlaceholderUtils.parse(player, config.scoreboardWaitingFormat()));
-					break;
-				case Starting:
-					board.updateLines(PlaceholderUtils.parse(player, config.scoreboardStartingFormat()));
-					break;
-				case Playing:
-					board.updateLines(PlaceholderUtils.parse(player, config.scoreboardPlayingFormat()));
-					break;
-				case Ending:
-					for (String playerName : game.teamPlayers.keySet()) {
-						remove(Bukkit.getPlayer(playerName).getUniqueId().toString());
-						playerName = null;
-					}
+	public void update(final @NotNull FastBoard board, final @NotNull Game game) {
+		final Player player = board.getPlayer();
+		switch (game.state) {
+			case Waiting:
+				board.updateLines(PlaceholderUtils.parse(player, config.scoreboardWaitingFormat()));
+				return;
+			case Starting:
+				board.updateLines(PlaceholderUtils.parse(player, config.scoreboardStartingFormat()));
+				return;
+			case Playing:
+				board.updateLines(PlaceholderUtils.parse(player, config.scoreboardPlayingFormat()));
+				return;
+			case Ending:
+				remove(player.getUniqueId().toString());
 			}
-			
-			player = null;
-		}
 	}
 	
 	@Override
-	public void reload() {
-		final TheBridge bridge = JavaPlugin.getPlugin(TheBridge.class);
-		
-		String id;
-		for (final Player player : Bukkit.getOnlinePlayers()) {
-			id = player.getUniqueId().toString();
-			
-			remove(id);
-			create(player, bridge.GetGameByPlayer(player));
+	public void stop() {
+		// Checks if the title task is cancelled.
+		if (titleTask != null) {
+			titleTask.cancel();
+			titleTask = null;
 		}
-	}
-	
-	@Override
-	public void clear() {
-		cache.keySet().forEach(this::remove);
+		// Checks if the frame task has been cancelled.
+		if (frameTask != null) {
+			frameTask.cancel();
+			frameTask = null;
+		}
 		cache.clear();
 	}
 }
