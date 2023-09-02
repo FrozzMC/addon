@@ -1,15 +1,17 @@
 package com.aivruu.addon.thebridge.model;
 
+import com.aivruu.addon.thebridge.enums.Result;
 import com.aivruu.addon.thebridge.model.config.ConfModel;
 import org.jetbrains.annotations.NotNull;
 
 public interface ConfManagerModel {
 	/**
-	 * Returns a boolean value if the configuration were loaded correctly.
+	 * Returns a boolean value if the configuration were loaded correctly<p>,
+	 * and return a {@link Result} enum type.
 	 *
-	 * @return True if the configuration were loaded, else return false.
+	 * @return A {@link Result} enum type.
 	 */
-	boolean wasLoaded();
+	@NotNull Result load();
 	
 	/**
 	 * Returns the {@code ConfModel} object for the configuration. If the object is null (configuration not loaded)<p>
