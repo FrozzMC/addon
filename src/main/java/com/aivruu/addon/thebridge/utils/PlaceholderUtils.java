@@ -77,20 +77,19 @@ public class PlaceholderUtils {
 		} else {
       content = MODEL.process(content);
     }
-    
 		// I know, all below is very ugly :9, but I don't know another way to do this, don't hate me pls.
 		// - MrBugs
 		final Game game = JavaPlugin.getPlugin(TheBridge.class).GetGameByPlayer(player);
 		// The player is in a game?
-		if (game == null) return content;
-    
+		if (game == null) {
+			return content;
+		}
 		// What?
 		for (final TeamBridge bridge : game.teams) {
 			content = content.replace("<team-color>", bridge.teamColor.getChatColor());
 			content = content.replace("<team-name>", bridge.teamColor.getTeamName());
 			content = content.replace("<current-points>", Integer.toString(bridge.getScorePoints()));
 		}
-		
 		final TeamPlayer teamPlayer = game.teamPlayers.get(player.getName());
 		return MODEL.process(content.replace("<player-score>", Integer.toString(teamPlayer.scores))
 			.replace("<player-kills>", Integer.toString(teamPlayer.kills))
