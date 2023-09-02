@@ -7,7 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class LoggerUtils {
-	private static final Logger LOGGER = ScoreboardAddonPlugin.get().getLogger();
+	private static final Logger LOGGER = ScoreboardAddonPlugin.getPlugin(ScoreboardAddonPlugin.class).getLogger();
 	
 	public static void info(final String @NotNull... logs) {
 		for (final String message : logs) {
