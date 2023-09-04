@@ -29,8 +29,7 @@ public final class ScoreboardAddonPlugin extends JavaPlugin {
 		LibraryHandler.loadLibraries(
 			"com{}github{}VelexNetwork:iridium-color-api:1.2.0",
 			"fr{}mrmicky:fastboard:2.0.0",
-			String.format("space{}arim{}dazzleconf:dazzleconf-core:%s", Constants.CONFIGURATION_LIBRARY_RELEASE),
-			String.format("space{}arim{}dazzleconf:dazzleconf-ext-snakeyaml:%s", Constants.CONFIGURATION_LIBRARY_RELEASE)
+			String.format("org{}spongepowered:configurate-gson:%s", Constants.CONFIGURATION_LIBRARY_RELEASE)
 		);
 		LoggerUtils.info("Loading configuration components...");
 		// Load the components for the configuration before load the files.
