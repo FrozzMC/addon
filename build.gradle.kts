@@ -23,7 +23,7 @@ dependencies {
 
 	compileOnly(files("libs/TheBridge.jar"))
 
-	compileOnly("space.arim.dazzleconf:dazzleconf-ext-snakeyaml:1.3.0-M2")
+	compileOnly("space.arim.dazzleconf:dazzleconf-ext-gson:1.3.0-M2")
 	compileOnly("fr.mrmicky:fastboard:2.0.0")
 	compileOnly("com.github.VelexNetwork:iridium-color-api:1.2.0")
 	
